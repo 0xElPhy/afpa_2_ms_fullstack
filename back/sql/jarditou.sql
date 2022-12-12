@@ -464,22 +464,60 @@ ON clients (cli_nom ASC);
 CREATE INDEX idx_com
 ON commandes (com_date DESC);
 
-CREATE USER 'gestionnaire'@'localhost' IDENTIFIED BY 'gestion';
-GRANT SELECT
-ON jarditou.produits, jarditou.commandes, jarditou.clients, jarditou.paniers
-TO 'gestionnaire'@'%';
+CREATE USER 'gestionnaire'@'%' IDENTIFIED BY 'gestion';
 
-CREATE USER 'approvisionneur'@'localhost' IDENTIFIED BY 'appro';
-GRANT SELECT, INSERT, DELETE, UPDATE
-ON jarditou.produits
-TO 'approvisionneur'@'%';
-GRANT SELECT
-ON jarditou.fournisseurs
-TO 'approvisionneur'@'%';
+    GRANT SELECT
+    ON jarditou.produits
+    TO 'gestionnaire'@'%';
 
-CREATE USER 'administrateur'@'localhost' IDENTIFIED BY 'admin';
+    GRANT SELECT
+    ON jarditou.commandes
+    TO 'gestionnaire'@'%';
+
+    GRANT SELECT
+    ON jarditou.clients
+    TO 'gestionnaire'@'%';
+
+    GRANT SELECT
+    ON jarditou.paniers
+    TO 'gestionnaire'@'%';
+
+FLUSH PRIVILEGES;
+
+CREATE USER 'approvisionneur'@'%' IDENTIFIED BY 'appro';
+
+    GRANT SELECT, INSERT, DELETE, UPDATE
+    ON jarditou.produits
+    TO 'approvisionneur'@'%';
+
+    GRANT SELECT
+    ON jarditou.fournisseurs
+    TO 'approvisionneur'@'%';
+
+CREATE USER 'administrateur'@'%' IDENTIFIED BY 'admin';
 GRANT ALL PRIVILEGES
 ON jarditou.*
 TO 'administrateur'@'%' WITH GRANT OPTION;
 
 FLUSH PRIVILEGES;
+
+-- CREATE USER 'gestionnaire'@'localhost' IDENTIFIED BY 'gestion';
+-- GRANT SELECT
+-- ON jarditou.produits, jarditou.commandes, jarditou.clients, jarditou.paniers
+-- TO 'gestionnaire'@'localhost';
+
+-- CREATE USER 'approvisionneur'@'localhost' IDENTIFIED BY 'appro';
+-- GRANT SELECT, INSERT, DELETE, UPDATE
+-- ON jarditou.produits
+-- TO 'approvisionneur'@'localhost';
+
+-- GRANT SELECT
+-- ON jarditou.fournisseurs
+-- TO 'approvisionneur'@'localhost';
+
+-- CREATE USER 'administrateur'@'localhost' IDENTIFIED BY 'admin';
+-- GRANT ALL PRIVILEGES
+-- ON jarditou.*
+-- TO 'administrateur'@'localhost';
+
+-- FLUSH PRIVILEGES;
