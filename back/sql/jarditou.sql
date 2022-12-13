@@ -82,13 +82,13 @@ CREATE TABLE commandes(
     com_date_liv    DATE NOT NULL,
     com_etat        VARCHAR(25) NOT NULL,
     com_facture     BIT(1) NOT NULL,
-    cli_id          INT NOT NULL,
+    com_cli_id          INT NOT NULL,
 
     PRIMARY KEY (com_id),
-    FOREIGN KEY (cli_id) REFERENCES clients (cli_id)
+    FOREIGN KEY (com_cli_id) REFERENCES clients (cli_id)
 );
 
-INSERT INTO commandes (com_id, com_date, com_date_liv, com_etat, com_facture, cli_id)
+INSERT INTO commandes (com_id, com_date, com_date_liv, com_etat, com_facture, com_cli_id)
 VALUES
     (1,"2021-08-27","2022-03-06","Shipped",1,20),
     (2,"2022-03-17","2022-07-18","Shipped",1,24),
@@ -232,15 +232,15 @@ CREATE TABLE produits(
     pro_prix_achat  FLOAT(5,2) NOT NULL,
     pro_stock_phy   INT NOT NULL,
     pro_stock_alt   INT NOT NULL,
-    fou_id          INT NOT NULL,
-    rub_id          INT NOT NULL,
+    pro_fou_id      INT NOT NULL,
+    pro_rub_id      INT NOT NULL,
     
     PRIMARY KEY (pro_code),
-    FOREIGN KEY (fou_id) REFERENCES fournisseurs (fou_id),
-    FOREIGN KEY (rub_id) REFERENCES rubriques (rub_id)
+    FOREIGN KEY (pro_fou_id) REFERENCES fournisseurs (fou_id),
+    FOREIGN KEY (pro_rub_id) REFERENCES rubriques (rub_id)
 );
 
-INSERT INTO produits (pro_code, pro_libelle, pro_description, pro_photo, pro_affichage, pro_prix_achat, pro_stock_phy, pro_stock_alt, fou_id, rub_id)
+INSERT INTO produits (pro_code, pro_libelle, pro_description, pro_photo, pro_affichage, pro_prix_achat, pro_stock_phy, pro_stock_alt, pro_fou_id, pro_rub_id)
 VALUES
     ("10","Gazon regarnissage","60m2","gazon_2.jpeg",0,"13.50",662,62,1,1),
     ("11","Sac de Semences gazon rustique","550m2","gazon_2.jpeg",0,"64.95",4967,63,9,1),
@@ -342,15 +342,15 @@ CREATE TABLE paniers(
     pan_quantite_pro    INT NOT NULL,
     pan_prix_vente_par  DECIMAL(5,2) NOT NULL,
     pan_prix_vente_pro  DECIMAL(5,2) NOT NULL,
-    pro_code            CHAR(6) NOT NULL,
-    com_id              INT NOT NULL,
+    pan_pro_code        CHAR(6) NOT NULL,
+    pan_com_id          INT NOT NULL,
 
-    FOREIGN KEY (pro_code)  REFERENCES produits (pro_code),
-    FOREIGN KEY (com_id)    REFERENCES commandes (com_id),
-    PRIMARY KEY (pro_code, com_id)
+    FOREIGN KEY (pan_pro_code)  REFERENCES produits (pro_code),
+    FOREIGN KEY (pan_com_id)    REFERENCES commandes (com_id),
+    PRIMARY KEY (pan_pro_code, pan_com_id)
 );
 
-INSERT INTO paniers (pan_quantite_pro, pan_prix_vente_par, pan_prix_vente_pro, pro_code, com_id)
+INSERT INTO paniers (pan_quantite_pro, pan_prix_vente_par, pan_prix_vente_pro, pan_pro_code, pan_com_id)
 VALUES
     (4,"89.99","40.1","44",18),
     (3,"10.55","209.95","83",21),
@@ -465,7 +465,6 @@ CREATE INDEX idx_com
 ON commandes (com_date DESC);
 
 CREATE USER 'gestionnaire'@'%' IDENTIFIED BY 'gestion';
-
     GRANT SELECT
     ON jarditou.produits
     TO 'gestionnaire'@'%';
@@ -482,10 +481,7 @@ CREATE USER 'gestionnaire'@'%' IDENTIFIED BY 'gestion';
     ON jarditou.paniers
     TO 'gestionnaire'@'%';
 
-FLUSH PRIVILEGES;
-
 CREATE USER 'approvisionneur'@'%' IDENTIFIED BY 'appro';
-
     GRANT SELECT, INSERT, DELETE, UPDATE
     ON jarditou.produits
     TO 'approvisionneur'@'%';
@@ -495,29 +491,8 @@ CREATE USER 'approvisionneur'@'%' IDENTIFIED BY 'appro';
     TO 'approvisionneur'@'%';
 
 CREATE USER 'administrateur'@'%' IDENTIFIED BY 'admin';
-GRANT ALL PRIVILEGES
-ON jarditou.*
-TO 'administrateur'@'%' WITH GRANT OPTION;
+    GRANT ALL PRIVILEGES
+    ON jarditou.*
+    TO 'administrateur'@'%' WITH GRANT OPTION;
 
 FLUSH PRIVILEGES;
-
--- CREATE USER 'gestionnaire'@'localhost' IDENTIFIED BY 'gestion';
--- GRANT SELECT
--- ON jarditou.produits, jarditou.commandes, jarditou.clients, jarditou.paniers
--- TO 'gestionnaire'@'localhost';
-
--- CREATE USER 'approvisionneur'@'localhost' IDENTIFIED BY 'appro';
--- GRANT SELECT, INSERT, DELETE, UPDATE
--- ON jarditou.produits
--- TO 'approvisionneur'@'localhost';
-
--- GRANT SELECT
--- ON jarditou.fournisseurs
--- TO 'approvisionneur'@'localhost';
-
--- CREATE USER 'administrateur'@'localhost' IDENTIFIED BY 'admin';
--- GRANT ALL PRIVILEGES
--- ON jarditou.*
--- TO 'administrateur'@'localhost';
-
--- FLUSH PRIVILEGES;
